@@ -1,0 +1,104 @@
+services:
+  # Attacker Machine (Kali Linux)
+  attacker:
+    image: kalilinux/kali-rolling:latest
+    container_name: de-ice-attacker
+    hostname: kali-attacker
+    tty: true
+    stdin_open: true
+    networks:
+      - lab_network
+    volumes:
+      - ./attacker-tools:/root/tools
+      - ./lab-files:/root/lab
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: >
+      /bin/bash -c "
+      apt update && 
+      apt install -y nmap hydra medusa john curl ftp netcat-traditional telnet ssh-client wordlists &&
+      gunzip /usr/share/wordlists/rockyou.txt.gz 2>/dev/null || true &&
+      echo 'Kali attacker ready! Use: docker exec -it de-ice-attacker bash' &&
+      tail -f /dev/null"
+    restart: unless-stopped
+
+  # Target Services
+  web:
+    image: httpd:2.4
+    container_name: de-ice-web
+    hostname: target-web
+    ports:
+      - "80:80"
+    volumes:
+      - ./web-content:/usr/local/apache2/htdocs:ro
+    networks:
+      - lab_network
+    restart: unless-stopped
+
+  ssh-target:
+    image: lscr.io/linuxserver/openssh-server:latest
+    container_name: de-ice-ssh
+    hostname: target-ssh
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - PASSWORD_ACCESS=true
+      - USER_NAME=aadams
+      - USER_PASSWORD=nostaw
+    ports:
+      - "2222:2222"
+    volumes:
+      - ./ssh-home:/config
+    networks:
+      - lab_network
+    restart: unless-stopped
+
+  ftp:
+    image: fauria/vsftpd
+    container_name: de-ice-ftp
+    hostname: target-ftp
+    environment:
+      - FTP_USER=anonymous
+      - FTP_PASS=anonymous
+      - PASV_ADDRESS=target-ftp
+      - PASV_MIN_PORT=21100
+      - PASV_MAX_PORT=21110
+    volumes:
+      - ./ftp-data:/home/vsftpd
+    ports:
+      - "21:21"
+      - "20:20"
+      - "21100-21110:21100-21110"
+    networks:
+      - lab_network
+    restart: unless-stopped
+
+  smtp:
+    image: mailhog/mailhog:latest
+    container_name: de-ice-smtp
+    hostname: target-smtp
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - lab_network
+    restart: unless-stopped
+
+  mail:
+    image: dovecot/dovecot:latest
+    container_name: de-ice-mail
+    hostname: target-mail
+    ports:
+      - "110:110"   # POP3
+      - "143:143"   # IMAP
+    networks:
+      - lab_network
+    restart: unless-stopped
+
+networks:
+  lab_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24

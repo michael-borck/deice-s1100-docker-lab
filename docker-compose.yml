@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  de-ice-s1100:
+    build: .
+    container_name: de-ice-s1100
+    hostname: de-ice-s1100
+    networks:
+      vulnnet:
+        ipv4_address: 192.168.1.100
+    ports:
+      - "21:21"      # FTP
+      - "22:22"      # SSH
+      - "25:25"      # SMTP
+      - "80:80"      # HTTP
+      - "110:110"    # POP3
+      - "143:143"    # IMAP
+    volumes:
+      - ./web:/var/www/html
+      - ./config:/opt/config
+    privileged: true
+    tty: true
+    stdin_open: true
+
+networks:
+  vulnnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
+          gateway: 192.168.1.1

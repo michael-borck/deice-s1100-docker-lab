@@ -1,0 +1,71 @@
+services:
+  de-ice-target:
+    image: httpd:2.4
+    container_name: de-ice-target
+    hostname: de-ice-s1100
+    ports:
+      - "80:80"     # HTTP
+      - "22:22"     # SSH
+      - "21:21"     # FTP  
+      - "20:20"     # FTP Data
+      - "25:25"     # SMTP
+      - "110:110"   # POP3
+      - "143:143"   # IMAP
+      - "8025:8025" # MailHog UI
+      - "21100-21110:21100-21110" # FTP Passive
+    volumes:
+      - ./web-content:/usr/local/apache2/htdocs:ro
+    networks:
+      deice_net:
+        ipv4_address: 192.168.100.10
+    depends_on:
+      - ssh-service
+      - ftp-service 
+      - smtp-service
+      - mail-service
+
+  ssh-service:
+    image: lscr.io/linuxserver/openssh-server:latest
+    container_name: de-ice-ssh-svc
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - PASSWORD_ACCESS=true
+      - USER_NAME=aadams
+      - USER_PASSWORD=nostaw
+    volumes:
+      - ./ssh-home:/home
+    network_mode: "container:de-ice-target"
+    restart: unless-stopped
+
+  ftp-service:
+    image: fauria/vsftpd
+    container_name: de-ice-ftp-svc
+    environment:
+      - FTP_USER=anonymous
+      - FTP_PASS=anonymous
+      - PASV_ADDRESS=192.168.100.10
+      - PASV_MIN_PORT=21100
+      - PASV_MAX_PORT=21110
+    volumes:
+      - ./ftp-data:/home/vsftpd
+    network_mode: "container:de-ice-target"
+
+  smtp-service:
+    image: mailhog/mailhog:latest
+    container_name: de-ice-smtp-svc
+    network_mode: "container:de-ice-target"
+
+  mail-service:
+    image: dovecot/dovecot:latest
+    container_name: de-ice-mail-svc
+    network_mode: "container:de-ice-target"
+
+networks:
+  deice_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24
+          gateway: 192.168.100.1
