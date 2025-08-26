@@ -34,12 +34,23 @@ echo "Created users.txt with potential usernames"
 
 echo "[+] Step 5: Generate Password List"
 cat > /root/lab/passwords.txt << 'EOF'
-nostaw
 password
 password123
 123456
 admin
 root
+aadams
+bbanter
+ccoffee
+ddeeds
+eeikman
+company
+deice
+2003
+2004
+security
+welcome
+letmein
 EOF
 echo "Created passwords.txt with common weak passwords"
 
