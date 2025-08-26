@@ -36,40 +36,55 @@ services:
     restart: unless-stopped
 
   ssh-target:
-    image: lscr.io/linuxserver/openssh-server:latest
+    image: ubuntu:20.04
     container_name: de-ice-ssh
     hostname: target-ssh
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-      - PASSWORD_ACCESS=true
-      - USER_NAME=aadams
-      - USER_PASSWORD=nostaw
+    command: >
+      /bin/bash -c "
+      apt update && 
+      apt install -y openssh-server sudo &&
+      useradd -m -s /bin/bash aadams &&
+      echo 'aadams:nostaw' | chpasswd &&
+      useradd -m -s /bin/bash bbanter &&
+      echo 'bbanter:password' | chpasswd &&
+      echo 'PermitRootLogin no' >> /etc/ssh/sshd_config &&
+      echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config &&
+      echo 'Port 22' >> /etc/ssh/sshd_config &&
+      service ssh start &&
+      tail -f /dev/null"
     ports:
-      - "2222:2222"
-    volumes:
-      - ./ssh-home:/config
+      - "2222:22"
     networks:
       - lab_network
     restart: unless-stopped
 
   ftp:
-    image: fauria/vsftpd
+    image: ubuntu:20.04
     container_name: de-ice-ftp
     hostname: target-ftp
-    environment:
-      - FTP_USER=anonymous
-      - FTP_PASS=anonymous
-      - PASV_ADDRESS=target-ftp
-      - PASV_MIN_PORT=21100
-      - PASV_MAX_PORT=21110
+    command: >
+      /bin/bash -c "
+      apt update &&
+      apt install -y vsftpd &&
+      mkdir -p /var/ftp/pub &&
+      cp -r /data/* /var/ftp/pub/ 2>/dev/null || true &&
+      echo 'anonymous_enable=YES' > /etc/vsftpd.conf &&
+      echo 'local_enable=NO' >> /etc/vsftpd.conf &&
+      echo 'write_enable=NO' >> /etc/vsftpd.conf &&
+      echo 'anon_upload_enable=NO' >> /etc/vsftpd.conf &&
+      echo 'anon_mkdir_write_enable=NO' >> /etc/vsftpd.conf &&
+      echo 'dirmessage_enable=YES' >> /etc/vsftpd.conf &&
+      echo 'xferlog_enable=YES' >> /etc/vsftpd.conf &&
+      echo 'connect_from_port_20=YES' >> /etc/vsftpd.conf &&
+      echo 'listen=YES' >> /etc/vsftpd.conf &&
+      echo 'listen_ipv6=NO' >> /etc/vsftpd.conf &&
+      echo 'anon_root=/var/ftp' >> /etc/vsftpd.conf &&
+      service vsftpd start &&
+      tail -f /dev/null"
     volumes:
-      - ./ftp-data:/home/vsftpd
+      - ./ftp-data:/data
     ports:
       - "21:21"
-      - "20:20"
-      - "21100-21110:21100-21110"
     networks:
       - lab_network
     restart: unless-stopped
