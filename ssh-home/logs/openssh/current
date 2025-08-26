@@ -7,3 +7,9 @@
 2025-08-26 04:53:27.263969737  Server listening on :: port 2222.
 2025-08-26 04:53:27.266438489  Connection to localhost (::1) 2222 port [tcp/*] succeeded!
 2025-08-26 04:53:27.277539975  Connection closed by ::1 port 54718
+2025-08-26 05:52:24.290641795  Received signal 15; terminating.
+2025-08-26 05:52:40.761724031  Server listening on 0.0.0.0 port 2222.
+2025-08-26 05:52:40.761795685  Server listening on :: port 2222.
+2025-08-26 05:52:40.762469050  Connection to localhost (::1) 2222 port [tcp/*] succeeded!
+2025-08-26 05:52:40.772540385  Connection closed by ::1 port 52822
+2025-08-26 06:05:36.908327911  Received signal 15; terminating.
