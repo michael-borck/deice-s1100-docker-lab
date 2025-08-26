@@ -20,7 +20,7 @@ git clone https://github.com/michael-borck/deice-s1100-docker-lab.git
 cd deice-s1100-docker-lab
 
 # Start the lab
-docker compose -f de-ice-simple.yml up -d
+docker compose up -d
 
 # Access the attacker container
 docker exec -it de-ice-attacker bash
@@ -33,7 +33,7 @@ git clone https://github.com/michael-borck/deice-s1100-docker-lab.git
 cd deice-s1100-docker-lab
 
 # Start the lab
-docker compose -f de-ice-simple.yml up -d
+docker compose up -d
 
 # Access the attacker container
 docker exec -it de-ice-attacker bash
@@ -83,7 +83,7 @@ cat /etc/os-release
 
 To stop the lab:
 ```bash
-docker compose -f de-ice-simple.yml down
+docker compose down
 ```
 
 ## Troubleshooting
@@ -104,7 +104,7 @@ docker compose -f de-ice-simple.yml down
 If ports are already in use:
 ```bash
 # Stop any conflicting services
-docker compose -f de-ice-simple.yml down
+docker compose down
 docker system prune -f
 
 # Restart the lab

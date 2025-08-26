@@ -10,7 +10,7 @@ chmod 755 ftp-data
 chmod 755 ftp-data/incoming
 
 echo "Starting De-ICE S1.100 simulation..."
-docker-compose -f de-ice-simple.yml up -d
+docker compose up -d
 
 echo ""
 echo "De-ICE S1.100 Docker Simulation Ready!"
@@ -40,4 +40,4 @@ echo "4. SSH brute force (hydra)"
 echo "5. FTP exploration (anonymous login)"
 echo "6. File decryption (openssl)"
 echo ""
-echo "🛑 Stop with: docker-compose -f de-ice-simple.yml down"
+echo "🛑 Stop with: docker compose down"

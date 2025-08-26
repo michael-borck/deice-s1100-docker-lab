@@ -267,7 +267,7 @@ telnet 172.20.0.7 143
 ## Lab Cleanup
 ```bash
 # From host system
-docker-compose -f de-ice-simple.yml down
+docker compose down
 docker system prune -f
 ```
 
@@ -275,7 +275,7 @@ docker system prune -f
 
 ### Container Won't Start
 ```bash
-docker-compose -f de-ice-simple.yml down
+docker compose down
 docker system prune -f
 ./setup.sh
 ```
@@ -283,7 +283,7 @@ docker system prune -f
 ### Network Issues
 ```bash
 docker network prune -f
-docker-compose -f de-ice-simple.yml up -d
+docker compose up -d
 ```
 
 ### Permission Issues
