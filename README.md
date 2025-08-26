@@ -10,11 +10,6 @@ docker compose up -d
 docker exec -it de-ice-attacker bash
 ```
 
-**Optional (Linux/Mac only):**
-```bash
-./setup.sh
-```
-
 ## Architecture
 
 **Pull-only approach** using mature Docker images:
@@ -72,7 +67,7 @@ See `pentest-guide.md` for detailed walkthrough.
 ## Platform-Specific Setup
 
 - **Windows users:** See [WINDOWS-SETUP.md](WINDOWS-SETUP.md) for detailed instructions
-- **Linux/Mac users:** Can use `./setup.sh` for automated setup with helpful output
+- **All platforms:** Standard Docker Compose commands work universally
 
 ## Cleanup
 

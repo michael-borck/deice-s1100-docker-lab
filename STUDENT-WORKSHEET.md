@@ -9,7 +9,7 @@ You have been hired to perform a penetration test on De-ICE Corporation's web se
 **Submission:** Complete this worksheet and submit your findings
 
 ## Pre-Lab Setup
-□ Start the lab environment: `./setup.sh`  
+□ Start the lab environment: `docker compose up -d`  
 □ Access attacker machine: `docker exec -it de-ice-attacker bash`  
 □ Verify you're in the Kali container: `whoami` (should show "root")
 
@@ -236,7 +236,7 @@ Provide 3 key security recommendations:
 ## Lab Cleanup
 Before leaving:
 □ Document all findings  
-□ Stop the lab: `docker-compose -f de-ice-simple.yml down`  
+□ Stop the lab: `docker compose down`  
 □ Submit completed worksheet
 
 ---

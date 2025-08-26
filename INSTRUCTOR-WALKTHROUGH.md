@@ -6,7 +6,7 @@ This document provides complete solutions for educators running the De-ICE S1.10
 
 ### 1. Start the Lab Environment
 ```bash
-./setup.sh
+docker compose up -d
 docker exec -it de-ice-attacker bash
 ```
 
