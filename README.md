@@ -1,3 +1,10 @@
+> [!NOTE]
+> **This repository is archived and read-only.**
+>
+> It has been superseded by [**ethical-hacking-docker-labs**](https://github.com/michael-borck/ethical-hacking-docker-labs), where this lab is maintained as [`labs/week8`](https://github.com/michael-borck/ethical-hacking-docker-labs/tree/main/labs/week8). The maintained version pulls the prebuilt `ghcr.io/michael-borck/ethical-base` image rather than installing tools at container start. `STUDENT-WORKSHEET.md` now lives there as `LAB-GUIDE.md`, and `INSTRUCTOR-WALKTHROUGH.md` as `WALKTHROUGH.md`.
+>
+> Please use the lab series instead. This repository is preserved for reference only.
+
 # De-ICE S1.100 Docker Simulation
 
 <!-- BADGES:START -->
